@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling>=1.20.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "demo-vrptw"
+version = "0.1.0"
+description = "Implement VRPTW using or-scenario framework"
+authors = [{name = "HerminYakovski", email = "hemin.ye@qq.com"}]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "or-scenario>=0.3.0",
+]
+
+[tool.uv]
+index-strategy = "unsafe-best-match"
+override-dependencies = [
+    "pandas>=2.0",
+]
+
+[tool.uv.sources]
+or-scenario = { index = "testpypi" }
+
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8",
+    "mypy>=1.10",
+    "pytest-cov>=7.1.0",
+    "pandas-stubs>=2.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["demo_vrptw"]
+
+[tool.coverage.run]
+source = ["demo_vrptw"]
+
+[tool.pytest.ini_options]
+addopts = "--cov --cov-report=term-missing --cov-report=html"
+filterwarnings = [
+    "ignore:.*declarative base already contains.*:sqlalchemy.exc.SAWarning"
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+exclude = ["tests/"]
+python_version = "3.13"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
