@@ -225,3 +225,10 @@ __marimo__/
 
 # JetBrains IDE
 .idea/
+
+# Solomon VRPTW benchmarks - ignore all except r/, c/, rc/, results/
+solomon-vrptw-benchmarks-main/*
+!solomon-vrptw-benchmarks-main/c/
+!solomon-vrptw-benchmarks-main/r/
+!solomon-vrptw-benchmarks-main/rc/
+!solomon-vrptw-benchmarks-main/results/
