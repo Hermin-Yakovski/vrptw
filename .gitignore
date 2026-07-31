@@ -232,3 +232,10 @@ solomon-vrptw-benchmarks-main/*
 !solomon-vrptw-benchmarks-main/r/
 !solomon-vrptw-benchmarks-main/rc/
 !solomon-vrptw-benchmarks-main/results/
+
+# local scripts
+scripts/*
+
+# generated data
+data/
+database/

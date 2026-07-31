@@ -9,6 +9,6 @@ Vehicle = Dimension('Vehicle', '车辆', 'V')
 
 
 __all__ = [
-    'Index', 'Metric'
+    'Index', 'Metric',
     'Customer', 'Route', 'Segment', 'Vehicle',
 ]
