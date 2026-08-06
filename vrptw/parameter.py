@@ -20,7 +20,9 @@ Latest = NumKey(160, 'Latest', '最晚到达时间')
 ServiceTime = NumKey(170, 'ServiceTime', '服务时间')
 
 # decisive parameters
-Sequence = NumKey(10, 'Sequence', '访问顺序' , int)    # sequence of customer i in route j
+Travel = NumKey(20, 'Travel', '访问路段ij' , bool)    # True, if a route visits customer i and then j
+Arrival = NumKey(30, 'Arrival', '到达j的时间' , int)
+Loaded = NumKey(40, 'Loaded', '访问j后载重' , int)
 
 # relations
 RouteId = DimensionKey(1000,  Route)    # Vehicle -> Route, 1:1 mapping
@@ -36,7 +38,7 @@ __all__ =[
     'X', 'Y', 'Demand',
     'Earliest', 'Latest', 'ServiceTime',
 
-    'Sequence',
+    'Travel', 'Arrival', 'Loaded',
 
     'RouteId', 'VehicleId', 'SegmentList',
 ]

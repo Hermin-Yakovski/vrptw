@@ -4,9 +4,9 @@ from or_register import NumKey
 from ....parameter import *    # from tran.parameter import *
 
 
-VarTravel = VarKey(20, 'Travel', '使用路段', sign='a', vtype=bool)
-VarArrival = VarKey(30, 'Arrival', '到达时间', sign='t', vtype=int)
-VarLoaded = VarKey(40, 'Loaded', '到达时载重', sign='l', vtype=float)
+VarTravel = VarKey(Travel, sign='a')
+VarArrival = VarKey(Arrival, sign='t')
+VarLoaded = VarKey(Loaded, sign='l')
 
 ConstrArcInOut = ConstrKey(10010, 'ConstrArcInOut', '客户出度入度', sign='constr10')
 ConstrCalculateCapacity = ConstrKey(10020, 'ConstrCalculateCapacity', '计算载重', sign='constr20')
