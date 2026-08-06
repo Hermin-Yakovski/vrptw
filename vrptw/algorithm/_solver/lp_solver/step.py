@@ -81,15 +81,15 @@ class CreateConstrArcInOut(CreateConstr):
         for c, in data[Id][Customer,].keys():
             name = '{}{}{}_equal'.format(self._symbol, (Customer,), (c,))
             model.Add(
-                var[VarTravel][Customer, Customer,][:, c,].sum()
-                == var[VarTravel][Customer, Customer,][c, :,].sum(), name=name)
+                var[VarTravel][Customer, Customer,][:, c,].sum(model=model)
+                == var[VarTravel][Customer, Customer,][c, :,].sum(model=model), name=name)
 
             if c:    # customers
                 name = '{}{}{}_customer'.format(self._symbol, (Customer,), (c,))
-                model.Add(var[VarTravel][Customer, Customer,][:, c,].sum() == 1, name=name)
+                model.Add(var[VarTravel][Customer, Customer,][:, c,].sum(model=model) == 1, name=name)
             else:    # depot
                 name = '{}{}{}_depot'.format(self._symbol, (Customer,), (c,))
-                model.Add(var[VarTravel][Customer, Customer,][:, c, ].sum() >= 1, name=name)
+                model.Add(var[VarTravel][Customer, Customer,][:, c, ].sum(model=model) >= 1, name=name)
 
 
 class CreateConstrCalculateCapacity(CreateConstr):
