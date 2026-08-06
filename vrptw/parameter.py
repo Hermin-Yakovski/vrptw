@@ -36,5 +36,7 @@ __all__ =[
     'X', 'Y', 'Demand',
     'Earliest', 'Latest', 'ServiceTime',
 
+    'Sequence',
+
     'RouteId', 'VehicleId', 'SegmentList',
 ]

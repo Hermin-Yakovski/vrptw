@@ -217,6 +217,7 @@ name = "demo-vrptw"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "or-algo" },
     { name = "or-scenario" },
 ]
 
@@ -230,7 +231,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "or-scenario", specifier = ">=0.3.0", index = "https://test.pypi.org/simple/" }]
+requires-dist = [
+    { name = "or-algo", specifier = ">=0.3.0" },
+    { name = "or-scenario", specifier = ">=0.3.0", index = "https://test.pypi.org/simple/" },
+]
 
 [package.metadata.requires-dev]
 dev = [
@@ -639,15 +643,15 @@ wheels = [
 
 [[package]]
 name = "or-algo"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://test.pypi.org/simple/" }
 dependencies = [
     { name = "or-register" },
     { name = "ortools" },
 ]
-sdist = { url = "https://test-files.pythonhosted.org/packages/e7/25/36d6a658afe57e1ea476afa278cf4f09c1ed1664bb6c1c0a68443a9da67b/or_algo-0.2.0.tar.gz", hash = "sha256:13c6ca4720d80f70ea6d4cdb88a5a53978f96e9cafee56a46bd2b352753711f1", size = 126621, upload-time = "2026-07-29T07:42:46.388Z" }
+sdist = { url = "https://test-files.pythonhosted.org/packages/18/2b/c98394b0e96fc6493d3a731459eb68376a65e0866cb6172400af69fbfca6/or_algo-0.3.0.tar.gz", hash = "sha256:6957394ae8abb2e6703592a7c68f69949afe4276f70bc78a94b0a6d532290df2", size = 126652, upload-time = "2026-07-30T09:31:28.277Z" }
 wheels = [
-    { url = "https://test-files.pythonhosted.org/packages/1e/e9/101dede7d857e8da28d9334ed6742190024b9fe2d1fc37927f8e55bf61e8/or_algo-0.2.0-py3-none-any.whl", hash = "sha256:53e5cec9072637533e4f3b48d3be01d4599269509744e8fb7fde5128ab33f98a", size = 11283, upload-time = "2026-07-29T07:42:45.484Z" },
+    { url = "https://test-files.pythonhosted.org/packages/f1/0b/661cb818521e94f27df77fec294ea8166c99a1c76ef89e28e8edfc19be2f/or_algo-0.3.0-py3-none-any.whl", hash = "sha256:09eb1c54ef1b9dc69d79bee6608d5b25b3c63c9e730fbf1be8d835522d0fbbda", size = 11294, upload-time = "2026-07-30T09:31:27.331Z" },
 ]
 
 [[package]]

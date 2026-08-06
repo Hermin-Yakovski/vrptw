@@ -11,6 +11,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "or-scenario>=0.3.0",
+    "or-algo>=0.3.0"
 ]
 
 [tool.uv]

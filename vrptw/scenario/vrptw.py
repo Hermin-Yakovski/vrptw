@@ -42,7 +42,7 @@ class VrptwScenario(Scenario):
             ON p.id = f.parameter_id
         WHERE c.instance = self._instance
         """
-        param_ids = (Earliest.id, Latest.id, ServiceTime.id)
+        param_ids = (Demand.id, Earliest.id, Latest.id, ServiceTime.id)
 
         rows = session.execute(
             select(
@@ -62,12 +62,15 @@ class VrptwScenario(Scenario):
 
         for row in rows:
             c: int = row.id
+            if c >= 40: continue
             self._data[Id][Customer,][c,] = row.id
             self._data[Name][Customer,][c,] = row.name
             self._data[Code][Customer,][c,] = row.name_en
             self._data[X][Customer,][c,] = row.x
             self._data[Y][Customer,][c,] = row.y
             match row.parameter_name:
+                case Demand.name:
+                    self._data[Demand][Customer,][c,] = row.quantity
                 case Earliest.name:
                     self._data[Earliest][Customer,][c,] = row.quantity
                 case Latest.name:
