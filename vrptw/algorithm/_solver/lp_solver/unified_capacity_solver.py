@@ -11,12 +11,11 @@ if TYPE_CHECKING:
 
 
 class UnifiedCapacitySolver(LpSolver):
-    def __init__(self, name: str = None) -> None:
-        name = name or self.__class__.__name__
-        super().__init__(name)
+    def __init__(self, *args, capacity: float, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         self.append(CreateVarTravel,)
         self.append(CreateVarArrival,)
-        self.append(CreateVarLoaded,)
+        self.append(CreateVarLoaded, capacity=capacity)
 
         self.append(CreateConstrArcInOut, )
         self.append(CreateConstrCalculateCapacity,)

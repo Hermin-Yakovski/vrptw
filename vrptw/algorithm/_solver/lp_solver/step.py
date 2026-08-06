@@ -57,15 +57,19 @@ class CreateVarArrival(CreateVar):
 
 
 class CreateVarLoaded(CreateVar):
+    _capacity: float
 
-    def __init__(self):
+
+    def __init__(self, capacity: float):
         super().__init__(VarLoaded)
+        import math
+        self._capacity = math.inf if capacity is None else capacity
 
     def run(self, data: Register[RegisterKey], model: pywraplp.Solver, var: Register[VarKey]) -> None:
         for i, in data[Id][Customer,].keys():
             name = '{}{}{}'.format(self._symbol, (Customer,), (i,))
             var[self._symbol][Customer,][i,]  = model.NumVar(
-                0, 100, name=name)
+                0, self._capacity, name=name)
             model.Objective().SetCoefficient(var[self._symbol][Customer,][i,], -0)
 
 
