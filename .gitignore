@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.pyd
 
 # Distribution / packaging
 .Python
@@ -235,6 +236,9 @@ solomon-vrptw-benchmarks-main/*
 
 # local scripts
 scripts/*
+
+# Un-ignore the C++ build script (scripts/* is ignored above)
+!scripts/build_cpp.py
 
 # generated data
 data/
