@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 import pytest
@@ -7,9 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from vrptw.algorithm import UnifiedCapacityAlgorithm
 from vrptw.dimension import Customer, Route
-from vrptw.parameter import (
-    Id, Name, Demand, Earliest, Latest, ServiceTime, Travel, Loaded,
-)
+from vrptw.parameter import Id, Travel, Loaded
 from vrptw.scenario import VrptwScenario
 from vrptw.schema import VrptwRequest
 
@@ -69,13 +66,12 @@ def test_capacity_not_exceeded(solved_scenario):
     capacity = 200
 
     for r, in data[Id][(Route,)].keys():
-        # Sum demand of all customers on this route
+        # Loaded tracks cumulative demand per customer on each route;
+        # the maximum cumulative value equals the total route demand.
         route_demand = 0
         for c, r2 in data[Loaded][(Customer, Route,)].keys():
             if r2 == r:
-                route_demand = data[Loaded][(Customer, Route,)][(c, r,)]
-        # Loaded tracks cumulative demand; the last customer's loaded = total
-        # This is a basic sanity check
+                route_demand = max(route_demand, data[Loaded][(Customer, Route,)][(c, r,)])
         assert route_demand <= capacity, (
             f"Route {r} exceeds capacity: {route_demand} > {capacity}"
         )
