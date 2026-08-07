@@ -57,8 +57,8 @@ def test_greedy_solver_two_routes():
     # Extract travel edges
     travel = {
         (i, j)
-        for (i, j), in result[Travel][(Customer, Customer,)].keys()
-        if result[Travel][(Customer, Customer,)][(i, j,)]
+        for i, j in result[Travel][(Customer, Customer,)].keys()
+        if result[Travel][(Customer, Customer,)][(i, j)]
     }
 
     expected = {(0, 1), (1, 3), (3, 4), (4, 0), (0, 2), (2, 0)}
