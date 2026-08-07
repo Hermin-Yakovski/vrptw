@@ -35,6 +35,7 @@ def solved_scenario():
 
 def test_all_customers_served(solved_scenario):
     """Every loaded customer should appear in at least one route."""
+    # _data is the or_scenario.Scenario register; no public accessor exists yet
     data = solved_scenario._data
     customer_ids = {c for c, in data[Id][(Customer,)].keys()}
     assert len(customer_ids) > 0, "No customers loaded"
@@ -55,14 +56,14 @@ def test_all_customers_served(solved_scenario):
 
 def test_routes_extracted(solved_scenario):
     """RouteExtractor should produce at least one route after greedy solver."""
-    data = solved_scenario._data
+    data = solved_scenario._data  # see comment in test_all_customers_served
     route_ids = list(data[Id][(Route,)].keys())
     assert len(route_ids) > 0, "No routes extracted"
 
 
 def test_capacity_not_exceeded(solved_scenario):
     """Each route's total demand should not exceed vehicle capacity (200)."""
-    data = solved_scenario._data
+    data = solved_scenario._data  # see comment in test_all_customers_served
     capacity = 200
 
     for r, in data[Id][(Route,)].keys():
@@ -72,6 +73,6 @@ def test_capacity_not_exceeded(solved_scenario):
         for c, r2 in data[Loaded][(Customer, Route,)].keys():
             if r2 == r:
                 route_demand = max(route_demand, data[Loaded][(Customer, Route,)][(c, r,)])
-        assert route_demand <= capacity, (
-            f"Route {r} exceeds capacity: {route_demand} > {capacity}"
+        assert 0 < route_demand <= capacity, (
+            f"Route {r} demand {route_demand} out of bounds (0, {capacity}]"
         )
