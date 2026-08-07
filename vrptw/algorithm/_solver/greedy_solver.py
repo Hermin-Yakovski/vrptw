@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from or_algo import Solver
@@ -11,8 +12,19 @@ from .lp_solver.symbol import *
 if TYPE_CHECKING:
     from or_register import Register, RegisterKey
 
+log = logging.getLogger(__name__)
+
 
 class GreedySolver(Solver):
+    """Nearest-neighbor construction heuristic for VRPTW.
+
+    Builds routes by greedily visiting the nearest feasible customer (by
+    Manhattan distance).  A customer is feasible if adding its demand does not
+    exceed vehicle capacity and the vehicle can arrive before its latest time
+    window.  The solver mutates the input register in-place, writing binary
+    ``Travel`` decisions that ``RouteExtractor`` can later decompose into routes.
+    """
+
     _capacity: float
 
     def __init__(self, *args, capacity: float, **kwargs):
@@ -20,6 +32,10 @@ class GreedySolver(Solver):
         self._capacity = float('inf') if capacity is None else capacity
 
     def solve(self, data: Register[RegisterKey]) -> Register[RegisterKey]:
+        """Run nearest-neighbor heuristic and write Travel decisions.
+
+        Modifies *data* in-place and returns it.
+        """
         # Collect all customer IDs except depot (0)
         unvisited: set[int] = {
             c for c, in data[Id][(Customer,)].keys() if c != 0
@@ -36,6 +52,7 @@ class GreedySolver(Solver):
             # Find nearest feasible customer
             best: int | None = None
             best_dist = float('inf')
+            best_arrival = 0.0
 
             for j in unvisited:
                 # Capacity check
@@ -59,19 +76,24 @@ class GreedySolver(Solver):
                 if dist < best_dist:
                     best = j
                     best_dist = dist
+                    best_arrival = arrival
 
             if best is not None:
                 # Visit customer best
                 data[Travel][(Customer, Customer,)][(current, best,)] = True
 
-                arrival = time + best_dist
-                time = max(arrival, data[Earliest][(Customer,)][(best,)]) \
+                time = max(best_arrival, data[Earliest][(Customer,)][(best,)]) \
                     + data[ServiceTime][(Customer,)][(best,)]
                 load += data[Demand][(Customer,)][(best,)]
                 current = best
                 unvisited.remove(best)
             else:
-                # No feasible customer — return to depot, start new route
+                if current == 0:
+                    # Already at depot with no feasible customer — remaining
+                    # customers are permanently unservable; break to avoid
+                    # infinite loop.
+                    break
+                # Return to depot, start new route
                 data[Travel][(Customer, Customer,)][(current, 0,)] = True
                 current = 0
                 load = 0
@@ -86,6 +108,9 @@ class GreedySolver(Solver):
 
         # Warn about unserved customers
         if unvisited:
-            print(f"Warning: {len(unvisited)} customer(s) could not be served: {unvisited}")
+            log.warning(
+                "%d customer(s) could not be served: %s",
+                len(unvisited), sorted(unvisited),
+            )
 
         return data
