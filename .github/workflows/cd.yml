@@ -24,7 +24,6 @@ jobs:
           CIBW_BUILD: "cp311-* cp312-* cp313-*"
           CIBW_SKIP: "*-musllinux_* *-win32 *_i686"
           CIBW_BUILD_VERBOSITY: 3
-          CIBW_BEFORE_BUILD: "pip install ninja"
           CIBW_ENVIRONMENT: "PIP_EXTRA_INDEX_URL=https://test.pypi.org/simple/"
 
       - name: Upload wheels
