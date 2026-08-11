@@ -11,19 +11,22 @@ from vrptw.scenario import VrptwScenario
 from vrptw.schema import VrptwRequest
 
 project_root = Path(__file__).resolve().parent.parent
-database = f"sqlite:///{project_root / 'database' / 'vrptw.db'}"
+_db_path = project_root / "database" / "vrptw.db"
+database = f"sqlite:///{_db_path}"
 
 
 @pytest.fixture(scope="module")
 def solved_scenario():
     """Load C101 instance and run the greedy algorithm pipeline."""
+    if not _db_path.exists():
+        pytest.skip("database/vrptw.db not found (integration test requires local database)")
     engine = sqlalchemy.create_engine(database)
-    SessionLocal = sessionmaker(bind=engine)
+    session_local = sessionmaker(bind=engine)
 
     request = VrptwRequest(instance="C101")
     scenario = VrptwScenario(request)
 
-    with SessionLocal() as session:
+    with session_local() as session:
         scenario.load(session=session)
         session.commit()
 
