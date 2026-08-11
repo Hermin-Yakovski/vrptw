@@ -1,0 +1,31 @@
+from or_algo.lp import ConstrKey, VarKey
+
+from ....parameter import *  # from tran.parameter import *
+
+VarTravel = VarKey(Travel, sign="a")
+VarArrival = VarKey(Arrival, sign="t")
+VarLoaded = VarKey(Loaded, sign="l")
+
+ConstrArcInOut = ConstrKey(10010, "ConstrArcInOut", "客户出度入度", sign="constr10")
+ConstrCalculateCapacity = ConstrKey(10020, "ConstrCalculateCapacity", "计算载重", sign="constr20")
+ConstrCalculateArrival = ConstrKey(10030, "ConstrCalculateArrival", "计算到达时间", sign="constr30")
+#
+# VarActivate = Var(Activate, 't')
+# VarTransit = Var(Transit, 'x')
+
+# ConstrActivateRelation = Constr('ConstrActivateRelation', '激活变量间的关系', 'ConstrActivateRelation')
+# ConstrActivateLineUnique = Constr('ConstrActivateLineUnique', '激活线路唯一', 'ConstrActivateLineUnique')
+# ConstrCalculateTransit = Constr('ConstrCalculateTransit', '计算途径件量', 'ConstrCalculateTransit')
+
+
+__all__ = [
+    "ConstrArcInOut",
+    "ConstrCalculateArrival",
+    "ConstrCalculateCapacity",
+    "VarArrival",
+    "VarLoaded",
+    "VarTravel",
+    # 'ConstrActivateRelation',
+    # 'ConstrActivateLineUnique',
+    # 'ConstrCalculateTransit',
+]

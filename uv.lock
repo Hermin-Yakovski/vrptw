@@ -213,35 +213,6 @@ async = [
 ]
 
 [[package]]
-name = "demo-vrptw"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "or-scenario" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "mypy" },
-    { name = "pandas-stubs" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "or-scenario", specifier = ">=0.3.0", index = "https://test.pypi.org/simple/" }]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "mypy", specifier = ">=1.10" },
-    { name = "pandas-stubs", specifier = ">=2.0" },
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "pytest-cov", specifier = ">=7.1.0" },
-    { name = "ruff", specifier = ">=0.8" },
-]
-
-[[package]]
 name = "et-xmlfile"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -639,15 +610,15 @@ wheels = [
 
 [[package]]
 name = "or-algo"
-version = "0.2.0"
+version = "0.3.1"
 source = { registry = "https://test.pypi.org/simple/" }
 dependencies = [
     { name = "or-register" },
     { name = "ortools" },
 ]
-sdist = { url = "https://test-files.pythonhosted.org/packages/e7/25/36d6a658afe57e1ea476afa278cf4f09c1ed1664bb6c1c0a68443a9da67b/or_algo-0.2.0.tar.gz", hash = "sha256:13c6ca4720d80f70ea6d4cdb88a5a53978f96e9cafee56a46bd2b352753711f1", size = 126621, upload-time = "2026-07-29T07:42:46.388Z" }
+sdist = { url = "https://test-files.pythonhosted.org/packages/ae/21/5398dc2d0f699cfbcf44605fe6258934d0342b2563dd53c1ff3cb66510c9/or_algo-0.3.1.tar.gz", hash = "sha256:85a27373caf052069130240afcfd517541925b0e69efce4ab4db5bd1d2e4610c", size = 126816, upload-time = "2026-08-06T09:49:58.849Z" }
 wheels = [
-    { url = "https://test-files.pythonhosted.org/packages/1e/e9/101dede7d857e8da28d9334ed6742190024b9fe2d1fc37927f8e55bf61e8/or_algo-0.2.0-py3-none-any.whl", hash = "sha256:53e5cec9072637533e4f3b48d3be01d4599269509744e8fb7fde5128ab33f98a", size = 11283, upload-time = "2026-07-29T07:42:45.484Z" },
+    { url = "https://test-files.pythonhosted.org/packages/67/b2/ee092d6e3b85132271c5c04b794b7ef35663cafc08702d693f72cecdae4b/or_algo-0.3.1-py3-none-any.whl", hash = "sha256:65d1f69f0be18f6cf9a856e8cd7afa35ad3be3fa87e18773b2dc1f8435285b93", size = 11425, upload-time = "2026-08-06T09:49:58.044Z" },
 ]
 
 [[package]]
@@ -1159,4 +1130,37 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/92/ff/5a28bdfd8c3ebec42564ac7d0e54ca3db65044a9314a97f9564fa7a1e926/tzdata-2026.3.tar.gz", hash = "sha256:4a1518b8993086a7982523e071643f3c0e5f213e75b21318e78bcabfff9d1415", size = 198674, upload-time = "2026-07-10T08:50:37.887Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e5/6d/b53b99a9f2766d095985947a5782f1702cabb129a34f7a802d7197af832f/tzdata-2026.3-py2.py3-none-any.whl", hash = "sha256:dc096730c87af6cab1b171c9d532be840741ff5d459015e7f6947bd7d7e54931", size = 348168, upload-time = "2026-07-10T08:50:36.46Z" },
+]
+
+[[package]]
+name = "vrptw"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "or-algo" },
+    { name = "or-scenario" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "mypy" },
+    { name = "pandas-stubs" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "or-algo", specifier = ">=0.3.1" },
+    { name = "or-scenario", specifier = ">=0.3.0", index = "https://test.pypi.org/simple/" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "mypy", specifier = ">=1.10" },
+    { name = "pandas-stubs", specifier = ">=2.0" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-cov", specifier = ">=7.1.0" },
+    { name = "ruff", specifier = ">=0.8" },
 ]
