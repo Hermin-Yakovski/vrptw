@@ -18,7 +18,7 @@ dependencies = [
 cmake.build-type = "Release"
 cmake.source-dir = "cpp"
 cmake.version = ">=3.20"
-cmake.args = ["-DPYBIND11_FINDPYTHON=ON"]
+cmake.args = ["-G", "Ninja", "-DPYBIND11_FINDPYTHON=ON"]
 wheel.packages = ["vrptw"]
 
 [tool.uv]
