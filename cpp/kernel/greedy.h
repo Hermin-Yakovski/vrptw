@@ -2,16 +2,18 @@
 #include <vector>
 #include <utility>
 
+using namespace std;
+
 struct GreedyResult {
-    std::vector<std::pair<int,int>> edges;   // travel edges (i,j)
-    std::vector<int> unserved;               // customer indices that couldn't be served
+    vector<pair<int,int>> edges;   // travel edges (i,j)
+    vector<int> unserved;          // customer indices that couldn't be served
 };
 
 GreedyResult greedy_solve(
-    const std::vector<double>& x,
-    const std::vector<double>& y,
-    const std::vector<double>& demand,
-    const std::vector<double>& earliest,
-    const std::vector<double>& latest,
-    const std::vector<double>& service_time,
+    const vector<double>& x,
+    const vector<double>& y,
+    const vector<double>& demand,
+    const vector<double>& earliest,
+    const vector<double>& latest,
+    const vector<double>& service_time,
     double capacity);
