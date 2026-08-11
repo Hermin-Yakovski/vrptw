@@ -444,6 +444,7 @@ Usage:
     python scripts/build_cpp.py          # build
     python scripts/build_cpp.py --clean  # clean build directory
 """
+
 import shutil
 import subprocess
 import sys
@@ -460,9 +461,14 @@ def build():
 
     # Configure
     subprocess.run(
-        ["cmake", str(CPP_DIR), "-G", "Ninja",
-         "-DCMAKE_BUILD_TYPE=Release",
-         f"-Dpybind11_DIR={_find_pybind11()}"],
+        [
+            "cmake",
+            str(CPP_DIR),
+            "-G",
+            "Ninja",
+            "-DCMAKE_BUILD_TYPE=Release",
+            f"-Dpybind11_DIR={_find_pybind11()}",
+        ],
         cwd=BUILD_DIR,
         check=True,
     )
@@ -481,6 +487,7 @@ def build():
 def _find_pybind11() -> str:
     """Find pybind11 cmake config directory from the installed Python package."""
     import pybind11
+
     return str(Path(pybind11.get_cmake_dir()))
 
 
@@ -597,13 +604,13 @@ class GreedyCppSolver(Solver):
 
     def __init__(self, *args, capacity: float, **kwargs):
         super().__init__(*args, **kwargs)
-        self._capacity = float('inf') if capacity is None else capacity
+        self._capacity = float("inf") if capacity is None else capacity
 
     def solve(self, data: Register[RegisterKey]) -> Register[RegisterKey]:
         from ._greedy_cpp import greedy_solve
 
         # Extract customer data into plain lists (dense, 0-indexed)
-        customer_ids = sorted(c for c, in data[Id][(Customer,)].keys())
+        customer_ids = sorted(c for (c,) in data[Id][(Customer,)].keys())
 
         n = len(customer_ids)
         x = [0.0] * n
@@ -623,8 +630,11 @@ class GreedyCppSolver(Solver):
 
         # Call C++ kernel
         result = greedy_solve(
-            x=x, y=y, demand=demand,
-            earliest=earliest, latest=latest,
+            x=x,
+            y=y,
+            demand=demand,
+            earliest=earliest,
+            latest=latest,
             service_time=service_time,
             capacity=self._capacity,
         )
@@ -633,14 +643,25 @@ class GreedyCppSolver(Solver):
         for i_idx, j_idx in result.edges:
             i_id = customer_ids[i_idx]
             j_id = customer_ids[j_idx]
-            data[Travel][(Customer, Customer,)][(i_id, j_id,)] = True
+            data[Travel][
+                (
+                    Customer,
+                    Customer,
+                )
+            ][
+                (
+                    i_id,
+                    j_id,
+                )
+            ] = True
 
         # Warn about unserved customers
         if result.unserved:
             unserved_ids = [customer_ids[idx] for idx in result.unserved]
             log.warning(
                 "%d customer(s) could not be served: %s",
-                len(unserved_ids), unserved_ids,
+                len(unserved_ids),
+                unserved_ids,
             )
 
         return data
@@ -653,7 +674,7 @@ Replace the contents of `vrptw/algorithm/_solver/greedy_solver_cpp/__init__.py`:
 ```python
 from .greedy_cpp_solver import GreedyCppSolver
 
-__all__ = ['GreedyCppSolver']
+__all__ = ["GreedyCppSolver"]
 ```
 
 - [ ] **Step 3: Commit**
@@ -683,7 +704,14 @@ from vrptw.algorithm._solver.greedy_solver import GreedySolver
 from vrptw.algorithm._solver.greedy_solver_cpp import GreedyCppSolver
 from vrptw.dimension import Customer
 from vrptw.parameter import (
-    Id, X, Y, Demand, Earliest, Latest, ServiceTime, Travel,
+    Id,
+    X,
+    Y,
+    Demand,
+    Earliest,
+    Latest,
+    ServiceTime,
+    Travel,
 )
 
 
@@ -725,8 +753,23 @@ def _extract_edges(data):
     """Extract set of (i, j) travel edges from a solved register."""
     return {
         (i, j)
-        for (i, j), in data[Travel][(Customer, Customer,)].keys()
-        if data[Travel][(Customer, Customer,)][(i, j,)]
+        for ((i, j),) in data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ].keys()
+        if data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ][
+            (
+                i,
+                j,
+            )
+        ]
     }
 
 
@@ -822,13 +865,13 @@ project_root = Path(__file__).resolve().parent.parent
 database = f"sqlite:///{project_root / 'database' / 'vrptw.db'}"
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def solved_scenario():
     """Load C101 instance and run GreedyCppSolver + RouteExtractor pipeline."""
     engine = sqlalchemy.create_engine(database)
     SessionLocal = sessionmaker(bind=engine)
 
-    request = VrptwRequest(instance='C101')
+    request = VrptwRequest(instance="C101")
     scenario = VrptwScenario(request)
 
     with SessionLocal() as session:
@@ -848,19 +891,34 @@ def solved_scenario():
 def test_all_customers_served(solved_scenario):
     """Every loaded customer should appear in at least one route."""
     data = solved_scenario._data
-    customer_ids = {c for c, in data[Id][(Customer,)].keys()}
+    customer_ids = {c for (c,) in data[Id][(Customer,)].keys()}
     assert len(customer_ids) > 0, "No customers loaded"
 
-    travel_keys = list(data[Travel][(Customer, Customer,)].keys())
+    travel_keys = list(
+        data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ].keys()
+    )
     visited = set()
-    for (i, j), in travel_keys:
-        if data[Travel][(Customer, Customer,)][(i, j,)]:
+    for ((i, j),) in travel_keys:
+        if data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ][
+            (
+                i,
+                j,
+            )
+        ]:
             visited.add(j)
 
     non_depot = customer_ids - {0}
-    assert non_depot.issubset(visited), (
-        f"Unserved customers: {non_depot - visited}"
-    )
+    assert non_depot.issubset(visited), f"Unserved customers: {non_depot - visited}"
 
 
 def test_routes_extracted(solved_scenario):
@@ -875,11 +933,29 @@ def test_capacity_not_exceeded(solved_scenario):
     data = solved_scenario._data
     capacity = 200
 
-    for (r,), in data[Id][(Route,)].keys():
+    for ((r,),) in data[Id][(Route,)].keys():
         route_demand = 0
-        for (c, r2), in data[Loaded][(Customer, Route,)].keys():
+        for ((c, r2),) in data[Loaded][
+            (
+                Customer,
+                Route,
+            )
+        ].keys():
             if r2 == r:
-                route_demand = max(route_demand, data[Loaded][(Customer, Route,)][(c, r,)])
+                route_demand = max(
+                    route_demand,
+                    data[Loaded][
+                        (
+                            Customer,
+                            Route,
+                        )
+                    ][
+                        (
+                            c,
+                            r,
+                        )
+                    ],
+                )
         assert 0 < route_demand <= capacity, (
             f"Route {r} demand {route_demand} out of bounds (0, {capacity}]"
         )
@@ -934,8 +1010,8 @@ class UnifiedCapacityAlgorithm(Algorithm):
     def __init__(self, *args, capacity: float, **kwargs):
         super().__init__(*args, **kwargs)
         # self.append(GreedySolver, 'GreedySolver', capacity=capacity)
-        self.append(GreedyCppSolver, 'GreedyCppSolver', capacity=capacity)
-        self.append(RouteExtractor, 'RouteExtractor')
+        self.append(GreedyCppSolver, "GreedyCppSolver", capacity=capacity)
+        self.append(RouteExtractor, "RouteExtractor")
 ```
 
 - [ ] **Step 2: Run the existing integration test to verify pipeline still works**

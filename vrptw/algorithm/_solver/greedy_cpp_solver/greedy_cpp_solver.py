@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from or_algo import Solver
 
@@ -26,9 +26,9 @@ class GreedyCppSolver(Solver):
 
     _capacity: float
 
-    def __init__(self, *args, capacity: float, **kwargs):
+    def __init__(self, *args: Any, capacity: float, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self._capacity = float('inf') if capacity is None else capacity
+        self._capacity = float("inf") if capacity is None else capacity
 
     def solve(self, data: Register[RegisterKey]) -> Register[RegisterKey]:
         """Run nearest-neighbor heuristic and write Travel decisions.
@@ -38,7 +38,7 @@ class GreedyCppSolver(Solver):
         from ._greedy_cpp import greedy_solve
 
         # Collect customer IDs (depot = 0) and build flat arrays for C++
-        customers = sorted(c for c, in data[Id][(Customer,)].keys())
+        customers = sorted(c for (c,) in data[Id][(Customer,)].keys())
 
         x = [float(data[X][Customer,][c,]) for c in customers]
         y = [float(data[Y][Customer,][c,]) for c in customers]
@@ -51,13 +51,20 @@ class GreedyCppSolver(Solver):
 
         # Write edges back as Travel decisions
         for i, j in result.edges:
-            data[Travel][Customer, Customer,][customers[i], customers[j],] = True
+            data[Travel][
+                Customer,
+                Customer,
+            ][
+                customers[i],
+                customers[j],
+            ] = True
 
         if result.unserved:
             unserved_ids = [customers[c] for c in result.unserved]
             log.warning(
                 "%d customer(s) could not be served: %s",
-                len(unserved_ids), sorted(unserved_ids),
+                len(unserved_ids),
+                sorted(unserved_ids),
             )
 
         return data

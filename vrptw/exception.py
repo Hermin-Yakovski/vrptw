@@ -6,5 +6,5 @@ class VrptwBasicError(AlgoServiceException):
 
 
 __all__ = [
-    'VrptwBasicError',
+    "VrptwBasicError",
 ]

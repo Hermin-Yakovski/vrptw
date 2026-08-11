@@ -236,13 +236,13 @@ class GreedyCppSolver(Solver):
 
     def __init__(self, *args, capacity: float, **kwargs):
         super().__init__(*args, **kwargs)
-        self._capacity = float('inf') if capacity is None else capacity
+        self._capacity = float("inf") if capacity is None else capacity
 
     def solve(self, data: Register[RegisterKey]) -> Register[RegisterKey]:
         from ._greedy_cpp import greedy_solve
 
         # Extract customer data into plain lists (dense, 0-indexed)
-        customer_ids = sorted(c for c, in data[Id][(Customer,)].keys())
+        customer_ids = sorted(c for (c,) in data[Id][(Customer,)].keys())
 
         n = len(customer_ids)
         x = [0.0] * n
@@ -262,8 +262,11 @@ class GreedyCppSolver(Solver):
 
         # Call C++ kernel
         result = greedy_solve(
-            x=x, y=y, demand=demand,
-            earliest=earliest, latest=latest,
+            x=x,
+            y=y,
+            demand=demand,
+            earliest=earliest,
+            latest=latest,
             service_time=service_time,
             capacity=self._capacity,
         )
@@ -272,14 +275,25 @@ class GreedyCppSolver(Solver):
         for i_idx, j_idx in result.edges:
             i_id = customer_ids[i_idx]
             j_id = customer_ids[j_idx]
-            data[Travel][(Customer, Customer,)][(i_id, j_id,)] = True
+            data[Travel][
+                (
+                    Customer,
+                    Customer,
+                )
+            ][
+                (
+                    i_id,
+                    j_id,
+                )
+            ] = True
 
         # Warn about unserved customers
         if result.unserved:
             unserved_ids = [customer_ids[idx] for idx in result.unserved]
             log.warning(
                 "%d customer(s) could not be served: %s",
-                len(unserved_ids), unserved_ids,
+                len(unserved_ids),
+                unserved_ids,
             )
 
         return data
@@ -290,7 +304,7 @@ class GreedyCppSolver(Solver):
 ```python
 from .greedy_cpp_solver import GreedyCppSolver
 
-__all__ = ['GreedyCppSolver']
+__all__ = ["GreedyCppSolver"]
 ```
 
 ### Pipeline Integration
@@ -301,13 +315,14 @@ In `UnifiedCapacityAlgorithm`, swap `GreedySolver` for `GreedyCppSolver`:
 from ._solver import RouteExtractor, GreedySolver
 from ._solver.greedy_solver_cpp import GreedyCppSolver
 
+
 class UnifiedCapacityAlgorithm(Algorithm):
     def __init__(self, *args, capacity: float, **kwargs):
         super().__init__(*args, **kwargs)
         # Choose one:
         # self.append(GreedySolver, 'GreedySolver', capacity=capacity)
-        self.append(GreedyCppSolver, 'GreedyCppSolver', capacity=capacity)
-        self.append(RouteExtractor, 'RouteExtractor')
+        self.append(GreedyCppSolver, "GreedyCppSolver", capacity=capacity)
+        self.append(RouteExtractor, "RouteExtractor")
 ```
 
 Both solvers produce identical `Travel` decisions consumed by `RouteExtractor`.
@@ -368,6 +383,7 @@ target_include_directories(_greedy_cpp PRIVATE ${CMAKE_SOURCE_DIR}/kernel)
 
 ```python
 """Build the C++ greedy solver extension."""
+
 import shutil
 import subprocess
 import sys
@@ -383,9 +399,14 @@ def build():
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
 
     subprocess.run(
-        ["cmake", str(CPP_DIR), "-G", "Ninja",
-         "-DCMAKE_BUILD_TYPE=Release",
-         f"-Dpybind11_DIR={_find_pybind11()}"],
+        [
+            "cmake",
+            str(CPP_DIR),
+            "-G",
+            "Ninja",
+            "-DCMAKE_BUILD_TYPE=Release",
+            f"-Dpybind11_DIR={_find_pybind11()}",
+        ],
         cwd=BUILD_DIR,
         check=True,
     )
@@ -400,6 +421,7 @@ def build():
 
 def _find_pybind11() -> str:
     import pybind11
+
     return str(Path(pybind11.get_cmake_dir()))
 
 

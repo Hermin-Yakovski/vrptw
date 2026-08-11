@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from vrptw.algorithm import UnifiedCapacityAlgorithm
 from vrptw.dimension import Customer, Route
-from vrptw.parameter import Id, Travel, Loaded
+from vrptw.parameter import Id, Loaded, Travel
 from vrptw.scenario import VrptwScenario
 from vrptw.schema import VrptwRequest
 
@@ -14,13 +14,13 @@ project_root = Path(__file__).resolve().parent.parent
 database = f"sqlite:///{project_root / 'database' / 'vrptw.db'}"
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def solved_scenario():
     """Load C101 instance and run the greedy algorithm pipeline."""
     engine = sqlalchemy.create_engine(database)
     SessionLocal = sessionmaker(bind=engine)
 
-    request = VrptwRequest(instance='C101')
+    request = VrptwRequest(instance="C101")
     scenario = VrptwScenario(request)
 
     with SessionLocal() as session:
@@ -37,21 +37,36 @@ def test_all_customers_served(solved_scenario):
     """Every loaded customer should appear in at least one route."""
     # _data is the or_scenario.Scenario register; no public accessor exists yet
     data = solved_scenario._data
-    customer_ids = {c for c, in data[Id][(Customer,)].keys()}
+    customer_ids = {c for (c,) in data[Id][(Customer,)].keys()}
     assert len(customer_ids) > 0, "No customers loaded"
 
     # Every customer (except depot) should have at least one incoming travel edge
-    travel_keys = list(data[Travel][(Customer, Customer,)].keys())
+    travel_keys = list(
+        data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ].keys()
+    )
     visited = set()
     for i, j in travel_keys:
-        if data[Travel][(Customer, Customer,)][(i, j,)]:
+        if data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ][
+            (
+                i,
+                j,
+            )
+        ]:
             visited.add(j)
 
     # All non-depot customers must be visited
     non_depot = customer_ids - {0}
-    assert non_depot.issubset(visited), (
-        f"Unserved customers: {non_depot - visited}"
-    )
+    assert non_depot.issubset(visited), f"Unserved customers: {non_depot - visited}"
 
 
 def test_routes_extracted(solved_scenario):
@@ -66,13 +81,31 @@ def test_capacity_not_exceeded(solved_scenario):
     data = solved_scenario._data  # see comment in test_all_customers_served
     capacity = 200
 
-    for r, in data[Id][(Route,)].keys():
+    for (r,) in data[Id][(Route,)].keys():
         # Loaded tracks cumulative demand per customer on each route;
         # the maximum cumulative value equals the total route demand.
         route_demand = 0
-        for c, r2 in data[Loaded][(Customer, Route,)].keys():
+        for c, r2 in data[Loaded][
+            (
+                Customer,
+                Route,
+            )
+        ].keys():
             if r2 == r:
-                route_demand = max(route_demand, data[Loaded][(Customer, Route,)][(c, r,)])
+                route_demand = max(
+                    route_demand,
+                    data[Loaded][
+                        (
+                            Customer,
+                            Route,
+                        )
+                    ][
+                        (
+                            c,
+                            r,
+                        )
+                    ],
+                )
         assert 0 < route_demand <= capacity, (
             f"Route {r} demand {route_demand} out of bounds (0, {capacity}]"
         )

@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from or_scenario import Scenario
@@ -22,9 +23,9 @@ class VrptwScenario(Scenario):
         self._instance = request.instance
 
     def load(self, session: Session | None = None) -> None:
-        self._snapshot_id, self._version_id = session.execute(
-            select(DimVersion.snapshot_id, DimVersion.id).where(DimVersion.name == self._instance)  # type: ignore[arg-type]
-        ).one_or_none()
+        self._snapshot_id, self._version_id = session.execute(  # type: ignore[union-attr]
+            select(DimVersion.snapshot_id, DimVersion.id).where(DimVersion.name == self._instance)  # type: ignore[attr-defined]
+        ).one()
 
         self._load_vehicles(session)
         self._load_customers(session)
@@ -44,25 +45,29 @@ class VrptwScenario(Scenario):
         """
         param_ids = (Demand.id, Earliest.id, Latest.id, ServiceTime.id)
 
-        rows = session.execute(
+        rows = session.execute(  # type: ignore[union-attr]
             select(
-                DimCustomer.x, DimCustomer.y, DimCustomer.id,
-                DimCustomer.name, DimCustomer.name_en,
-                DimParameter.name_en.label("parameter_name"),
-                FactCustomer.quantity,
+                DimCustomer.x,  # type: ignore[attr-defined]
+                DimCustomer.y,  # type: ignore[attr-defined]
+                DimCustomer.id,  # type: ignore[attr-defined]
+                DimCustomer.name,  # type: ignore[attr-defined]
+                DimCustomer.name_en,  # type: ignore[attr-defined]
+                DimParameter.name_en.label("parameter_name"),  # type: ignore[attr-defined]
+                FactCustomer.quantity,  # type: ignore[attr-defined]
             )
-            .join(FactCustomer, FactCustomer.customer_id == DimCustomer.id)  # type: ignore[arg-type]
-            .join(DimParameter, DimParameter.id == FactCustomer.parameter_id)  # type: ignore[arg-type]
+            .join(FactCustomer, FactCustomer.customer_id == DimCustomer.id)  # type: ignore[attr-defined]
+            .join(DimParameter, DimParameter.id == FactCustomer.parameter_id)  # type: ignore[attr-defined]
             .where(
-                FactCustomer.snapshot_id == self._snapshot_id,  # type: ignore[arg-type]
-                FactCustomer.parameter_id.in_(param_ids),  # type: ignore[union-attr]
-                DimCustomer.instance == self._instance,  # type: ignore[arg-type]
+                FactCustomer.snapshot_id == self._snapshot_id,  # type: ignore[attr-defined]
+                FactCustomer.parameter_id.in_(param_ids),  # type: ignore[attr-defined]
+                DimCustomer.instance == self._instance,  # type: ignore[attr-defined]
             )
         ).all()
 
         for row in rows:
             c: int = row.id
-            if c >= 40: continue
+            if c >= 40:
+                continue
             self._data[Id][Customer,][c,] = row.id
             self._data[Name][Customer,][c,] = row.name
             self._data[Code][Customer,][c,] = row.name_en
@@ -79,13 +84,13 @@ class VrptwScenario(Scenario):
                     self._data[ServiceTime][Customer,][c,] = row.quantity
 
     def _load_vehicles(self, session: Session | None = None) -> None:
-        rows = session.execute(
-            select(DimVehicle.id, DimVehicle.name, DimVehicle.name_en, FactVehicle.quantity)
-            .join(FactVehicle, FactVehicle.vehicle_id == DimVehicle.id)  # type: ignore[arg-type]
+        rows = session.execute(  # type: ignore[union-attr]
+            select(DimVehicle.id, DimVehicle.name, DimVehicle.name_en, FactVehicle.quantity)  # type: ignore[attr-defined]
+            .join(FactVehicle, FactVehicle.vehicle_id == DimVehicle.id)  # type: ignore[attr-defined]
             .where(
-                FactVehicle.snapshot_id == self._snapshot_id,  # type: ignore[arg-type]
-                FactVehicle.parameter_id == Capacity.id,  # type: ignore[arg-type]
-                FactVehicle.quantity > 0,  # type: ignore[operator]
+                FactVehicle.snapshot_id == self._snapshot_id,  # type: ignore[attr-defined]
+                FactVehicle.parameter_id == Capacity.id,  # type: ignore[attr-defined]
+                FactVehicle.quantity > 0,  # type: ignore[attr-defined]
             )
         ).all()
 
@@ -93,5 +98,5 @@ class VrptwScenario(Scenario):
             v: int = row.id
             self._data[Id][Vehicle,][v,] = row.id
             self._data[Name][Vehicle,][v,] = row.name
-            self._data[Code][Vehicle,][v,]  = row.name_en
-            self._data[Capacity][Vehicle,][v,]  = row.quantity
+            self._data[Code][Vehicle,][v,] = row.name_en
+            self._data[Capacity][Vehicle,][v,] = row.quantity

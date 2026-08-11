@@ -59,7 +59,14 @@ from or_register import Register
 from vrptw.algorithm._solver.greedy_solver import GreedySolver
 from vrptw.dimension import Customer
 from vrptw.parameter import (
-    Id, X, Y, Demand, Earliest, Latest, ServiceTime, Travel,
+    Id,
+    X,
+    Y,
+    Demand,
+    Earliest,
+    Latest,
+    ServiceTime,
+    Travel,
 )
 
 
@@ -113,8 +120,23 @@ def test_greedy_solver_two_routes():
     # Extract travel edges
     travel = {
         (i, j)
-        for (i, j), in result[Travel][(Customer, Customer,)].keys()
-        if result[Travel][(Customer, Customer,)][(i, j,)]
+        for ((i, j),) in result[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ].keys()
+        if result[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ][
+            (
+                i,
+                j,
+            )
+        ]
     }
 
     expected = {(0, 1), (1, 3), (3, 4), (4, 0), (0, 2), (2, 0)}
@@ -168,25 +190,20 @@ class GreedySolver(Solver):
 
     def __init__(self, *args, capacity: float, **kwargs):
         super().__init__(*args, **kwargs)
-        self._capacity = float('inf') if capacity is None else capacity
+        self._capacity = float("inf") if capacity is None else capacity
 
     def solve(self, data: Register[RegisterKey]) -> Register[RegisterKey]:
         # Collect all customer IDs except depot (0)
-        unvisited: set[int] = {
-            c for c, in data[Id][(Customer,)].keys() if c != 0
-        }
+        unvisited: set[int] = {c for (c,) in data[Id][(Customer,)].keys() if c != 0}
 
         current = 0  # depot
         load: float = 0
-        time: float = (
-            data[Earliest][(Customer,)][(0,)]
-            + data[ServiceTime][(Customer,)][(0,)]
-        )
+        time: float = data[Earliest][(Customer,)][(0,)] + data[ServiceTime][(Customer,)][(0,)]
 
         while unvisited:
             # Find nearest feasible customer
             best: int | None = None
-            best_dist = float('inf')
+            best_dist = float("inf")
 
             for j in unvisited:
                 # Capacity check
@@ -194,9 +211,8 @@ class GreedySolver(Solver):
                     continue
 
                 # Travel time (Manhattan distance)
-                dist = (
-                    abs(data[X][(Customer,)][(current,)] - data[X][(Customer,)][(j,)])
-                    + abs(data[Y][(Customer,)][(current,)] - data[Y][(Customer,)][(j,)])
+                dist = abs(data[X][(Customer,)][(current,)] - data[X][(Customer,)][(j,)]) + abs(
+                    data[Y][(Customer,)][(current,)] - data[Y][(Customer,)][(j,)]
                 )
 
                 # Arrival time at j
@@ -213,27 +229,56 @@ class GreedySolver(Solver):
 
             if best is not None:
                 # Visit customer best
-                data[Travel][(Customer, Customer,)][(current, best,)] = True
+                data[Travel][
+                    (
+                        Customer,
+                        Customer,
+                    )
+                ][
+                    (
+                        current,
+                        best,
+                    )
+                ] = True
 
                 arrival = time + best_dist
-                time = max(arrival, data[Earliest][(Customer,)][(best,)]) \
+                time = (
+                    max(arrival, data[Earliest][(Customer,)][(best,)])
                     + data[ServiceTime][(Customer,)][(best,)]
+                )
                 load += data[Demand][(Customer,)][(best,)]
                 current = best
                 unvisited.remove(best)
             else:
                 # No feasible customer — return to depot, start new route
-                data[Travel][(Customer, Customer,)][(current, 0,)] = True
+                data[Travel][
+                    (
+                        Customer,
+                        Customer,
+                    )
+                ][
+                    (
+                        current,
+                        0,
+                    )
+                ] = True
                 current = 0
                 load = 0
-                time = (
-                    data[Earliest][(Customer,)][(0,)]
-                    + data[ServiceTime][(Customer,)][(0,)]
-                )
+                time = data[Earliest][(Customer,)][(0,)] + data[ServiceTime][(Customer,)][(0,)]
 
         # Close last route
         if current != 0:
-            data[Travel][(Customer, Customer,)][(current, 0,)] = True
+            data[Travel][
+                (
+                    Customer,
+                    Customer,
+                )
+            ][
+                (
+                    current,
+                    0,
+                )
+            ] = True
 
         # Warn about unserved customers
         if unvisited:
@@ -280,7 +325,14 @@ from sqlalchemy.orm import sessionmaker
 from vrptw.algorithm import UnifiedCapacityAlgorithm
 from vrptw.dimension import Customer, Route
 from vrptw.parameter import (
-    Id, Name, Demand, Earliest, Latest, ServiceTime, Travel, Loaded,
+    Id,
+    Name,
+    Demand,
+    Earliest,
+    Latest,
+    ServiceTime,
+    Travel,
+    Loaded,
 )
 from vrptw.scenario import VrptwScenario
 from vrptw.schema import VrptwRequest
@@ -289,13 +341,13 @@ project_root = Path(__file__).resolve().parent.parent
 database = f"sqlite:///{project_root / 'database' / 'vrptw.db'}"
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def solved_scenario():
     """Load C101 instance and run the greedy algorithm pipeline."""
     engine = sqlalchemy.create_engine(database)
     SessionLocal = sessionmaker(bind=engine)
 
-    request = VrptwRequest(instance='C101')
+    request = VrptwRequest(instance="C101")
     scenario = VrptwScenario(request)
 
     with SessionLocal() as session:
@@ -311,21 +363,36 @@ def solved_scenario():
 def test_all_customers_served(solved_scenario):
     """Every loaded customer should appear in at least one route."""
     data = solved_scenario.data
-    customer_ids = {c for c, in data[Id][(Customer,)].keys()}
+    customer_ids = {c for (c,) in data[Id][(Customer,)].keys()}
     assert len(customer_ids) > 0, "No customers loaded"
 
     # Every customer (except depot) should have at least one incoming travel edge
-    travel_keys = list(data[Travel][(Customer, Customer,)].keys())
+    travel_keys = list(
+        data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ].keys()
+    )
     visited = set()
-    for (i, j), in travel_keys:
-        if data[Travel][(Customer, Customer,)][(i, j,)]:
+    for ((i, j),) in travel_keys:
+        if data[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ][
+            (
+                i,
+                j,
+            )
+        ]:
             visited.add(j)
 
     # All non-depot customers must be visited
     non_depot = customer_ids - {0}
-    assert non_depot.issubset(visited), (
-        f"Unserved customers: {non_depot - visited}"
-    )
+    assert non_depot.issubset(visited), f"Unserved customers: {non_depot - visited}"
 
 
 def test_routes_extracted(solved_scenario):
@@ -340,17 +407,30 @@ def test_capacity_not_exceeded(solved_scenario):
     data = solved_scenario.data
     capacity = 200
 
-    for (r,), in data[Id][(Route,)].keys():
+    for ((r,),) in data[Id][(Route,)].keys():
         # Sum demand of all customers on this route
         route_demand = 0
-        for (c, r2), in data[Loaded][(Customer, Route,)].keys():
+        for ((c, r2),) in data[Loaded][
+            (
+                Customer,
+                Route,
+            )
+        ].keys():
             if r2 == r:
-                route_demand = data[Loaded][(Customer, Route,)][(c, r,)]
+                route_demand = data[Loaded][
+                    (
+                        Customer,
+                        Route,
+                    )
+                ][
+                    (
+                        c,
+                        r,
+                    )
+                ]
         # Loaded tracks cumulative demand; the last customer's loaded = total
         # This is a basic sanity check
-        assert route_demand <= capacity, (
-            f"Route {r} exceeds capacity: {route_demand} > {capacity}"
-        )
+        assert route_demand <= capacity, f"Route {r} exceeds capacity: {route_demand} > {capacity}"
 ```
 
 - [ ] **Step 2: Run integration test**

@@ -1,7 +1,6 @@
-from . import algorithm
-from . import scenario
+from . import algorithm, scenario
 
 __all__ = [
-    'algorithm',
-    'scenario',
+    "algorithm",
+    "scenario",
 ]

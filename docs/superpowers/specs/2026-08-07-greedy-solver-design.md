@@ -88,10 +88,10 @@ class GreedySolver(Solver):
 
     def __init__(self, *args, capacity: float, **kwargs):
         super().__init__(*args, **kwargs)
-        self._capacity = float('inf') if capacity is None else capacity
+        self._capacity = float("inf") if capacity is None else capacity
 ```
 
 The `capacity` parameter is passed from `UnifiedCapacityAlgorithm`:
 ```python
-self.append(GreedySolver, 'GreedySolver', capacity=capacity)
+self.append(GreedySolver, "GreedySolver", capacity=capacity)
 ```

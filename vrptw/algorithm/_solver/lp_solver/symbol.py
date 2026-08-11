@@ -1,16 +1,14 @@
 from or_algo.lp import ConstrKey, VarKey
-from or_register import NumKey
 
-from ....parameter import *    # from tran.parameter import *
+from ....parameter import *  # from tran.parameter import *
 
+VarTravel = VarKey(Travel, sign="a")
+VarArrival = VarKey(Arrival, sign="t")
+VarLoaded = VarKey(Loaded, sign="l")
 
-VarTravel = VarKey(Travel, sign='a')
-VarArrival = VarKey(Arrival, sign='t')
-VarLoaded = VarKey(Loaded, sign='l')
-
-ConstrArcInOut = ConstrKey(10010, 'ConstrArcInOut', '客户出度入度', sign='constr10')
-ConstrCalculateCapacity = ConstrKey(10020, 'ConstrCalculateCapacity', '计算载重', sign='constr20')
-ConstrCalculateArrival = ConstrKey(10030, 'ConstrCalculateArrival', '计算到达时间', sign='constr30')
+ConstrArcInOut = ConstrKey(10010, "ConstrArcInOut", "客户出度入度", sign="constr10")
+ConstrCalculateCapacity = ConstrKey(10020, "ConstrCalculateCapacity", "计算载重", sign="constr20")
+ConstrCalculateArrival = ConstrKey(10030, "ConstrCalculateArrival", "计算到达时间", sign="constr30")
 #
 # VarActivate = Var(Activate, 't')
 # VarTransit = Var(Transit, 'x')
@@ -21,14 +19,12 @@ ConstrCalculateArrival = ConstrKey(10030, 'ConstrCalculateArrival', '计算到�
 
 
 __all__ = [
-    'VarTravel',
-    'VarArrival',
-    'VarLoaded',
-
-    'ConstrArcInOut',
-    'ConstrCalculateCapacity',
-    'ConstrCalculateArrival',
-
+    "ConstrArcInOut",
+    "ConstrCalculateArrival",
+    "ConstrCalculateCapacity",
+    "VarArrival",
+    "VarLoaded",
+    "VarTravel",
     # 'ConstrActivateRelation',
     # 'ConstrActivateLineUnique',
     # 'ConstrCalculateTransit',

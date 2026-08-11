@@ -3,7 +3,14 @@ from or_register import Register
 from vrptw.algorithm._solver.greedy_solver import GreedySolver
 from vrptw.dimension import Customer
 from vrptw.parameter import (
-    Id, X, Y, Demand, Earliest, Latest, ServiceTime, Travel,
+    Demand,
+    Earliest,
+    Id,
+    Latest,
+    ServiceTime,
+    Travel,
+    X,
+    Y,
 )
 
 
@@ -57,8 +64,18 @@ def test_greedy_solver_two_routes():
     # Extract travel edges
     travel = {
         (i, j)
-        for i, j in result[Travel][(Customer, Customer,)].keys()
-        if result[Travel][(Customer, Customer,)][(i, j)]
+        for i, j in result[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ].keys()
+        if result[Travel][
+            (
+                Customer,
+                Customer,
+            )
+        ][(i, j)]
     }
 
     expected = {(0, 1), (1, 3), (3, 4), (4, 0), (0, 2), (2, 0)}

@@ -1,9 +1,9 @@
 [build-system]
-requires = ["hatchling>=1.20.0"]
-build-backend = "hatchling.build"
+requires = ["scikit-build-core>=0.10", "pybind11>=2.12"]
+build-backend = "scikit_build_core.build"
 
 [project]
-name = "demo-vrptw"
+name = "vrptw"
 version = "0.1.0"
 description = "Implement VRPTW using or-scenario framework"
 authors = [{name = "HerminYakovski", email = "hemin.ye@qq.com"}]
@@ -12,8 +12,14 @@ requires-python = ">=3.11"
 dependencies = [
     "or-scenario>=0.3.0",
     "or-algo>=0.3.1",
-    "pybind11>=2.12",
 ]
+
+[tool.scikit-build]
+cmake.build-type = "Release"
+cmake.source-dir = "cpp"
+cmake.version = ">=3.20"
+cmake.args = ["-G", "Ninja", "-DPYBIND11_FINDPYTHON=ON"]
+wheel.packages = ["vrptw"]
 
 [tool.uv]
 index-strategy = "unsafe-best-match"
@@ -23,7 +29,6 @@ override-dependencies = [
 
 [tool.uv.sources]
 or-scenario = { index = "testpypi" }
-
 
 [[tool.uv.index]]
 name = "testpypi"
@@ -36,14 +41,10 @@ dev = [
     "mypy>=1.10",
     "pytest-cov>=7.1.0",
     "pandas-stubs>=2.0",
-    "pybind11>=2.12",
 ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["demo_vrptw"]
-
 [tool.coverage.run]
-source = ["demo_vrptw"]
+source = ["vrptw"]
 
 [tool.pytest.ini_options]
 addopts = "--cov --cov-report=term-missing --cov-report=html"
@@ -55,8 +56,11 @@ filterwarnings = [
 line-length = 100
 target-version = "py311"
 
+[tool.ruff.lint]
+ignore = ["SIM118"]  # or_register Selection.keys() is not dict.keys()
+
 [tool.mypy]
-exclude = ["tests/"]
+files = ["vrptw"]
 python_version = "3.13"
 strict = true
 warn_return_any = true
