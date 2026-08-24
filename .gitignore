@@ -236,7 +236,7 @@ solomon-vrptw-benchmarks-main/*
 !solomon-vrptw-benchmarks-main/results/
 
 # local scripts
-scripts/*
+#scripts/*
 
 # Un-ignore the C++ build script (scripts/* is ignored above)
 !scripts/build_cpp.py
