@@ -30,7 +30,7 @@ def solved_scenario():
         scenario.load(session=session)
         session.commit()
 
-    scenario.set_algorithm(UnifiedCapacityAlgorithm, capacity=200)
+    scenario.set_algorithm(UnifiedCapacityAlgorithm, capacity=200, solver='greedy')
     scenario.exec_algorithm()
 
     return scenario
