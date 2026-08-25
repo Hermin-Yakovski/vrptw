@@ -1,9 +1,13 @@
 FROM python:3.11-slim
 
-RUN pip install --no-cache-dir \
-    --extra-index-url https://test.pypi.org/simple/ \
-    vrptw==0.1.6
+WORKDIR /app
 
-COPY scripts/docker_entrypoint.py /usr/local/bin/docker_entrypoint.py
+# Install uv
+RUN pip install --no-cache-dir uv
 
-ENTRYPOINT ["python", "/usr/local/bin/docker_entrypoint.py"]
+COPY . .
+
+# Install with uv to respect lock file
+RUN uv sync --frozen --no-dev
+
+ENTRYPOINT ["python", "scripts/docker_entrypoint.py"]

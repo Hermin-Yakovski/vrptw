@@ -105,14 +105,14 @@ class CreateConstrArcInOut(CreateConstr):
                 ][
                     :,
                     c,
-                ].sum(model=model, var=var)
+                ].sum(model=model)
                 == var[VarTravel][
                     Customer,
                     Customer,
                 ][
                     c,
                     :,
-                ].sum(model=model, var=var),
+                ].sum(model=model),
                 name=name,
             )
 
@@ -125,7 +125,7 @@ class CreateConstrArcInOut(CreateConstr):
                     ][
                         :,
                         c,
-                    ].sum(model=model, var=var)
+                    ].sum(model=model)
                     == 1,
                     name=name,
                 )
@@ -138,7 +138,7 @@ class CreateConstrArcInOut(CreateConstr):
                     ][
                         :,
                         c,
-                    ].sum(model=model, var=var)
+                    ].sum(model=model)
                     >= 1,
                     name=name,
                 )
