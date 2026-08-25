@@ -68,6 +68,18 @@ scenario.exec_algorithm()
 | `'greedy'`        | Python greedy construction heuristic     |
 | `'greedy_cpp'`    | C++ greedy construction heuristic        |
 
+## Docker Deployment
+
+Run the solver in a Docker container (useful for systems with older glibc, e.g., CentOS 7):
+
+```bash
+docker build -t vrptw .
+cp ./database/vrptw.db /data/jar
+docker run --rm -v /data/jar:/data vrptw --instance=C101
+```
+
+Results are saved as `.xlsx` in the mounted directory.
+
 ## Testing
 
 ```bash
