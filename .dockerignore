@@ -30,8 +30,7 @@ htmlcov/
 
 # Documentation
 docs/
-*.md
-README*
+README_DOCKER.md
 LICENSE*
 
 # C++ source (not needed for Python-only deployment)
