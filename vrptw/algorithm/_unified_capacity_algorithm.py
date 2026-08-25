@@ -2,7 +2,7 @@ from typing import Any
 
 from or_algo import Algorithm
 
-from ._solver import GreedyCppSolver, GreedySolver, RouteExtractor
+from ._solver import UnifiedCapacitySolver, GreedyCppSolver, GreedySolver, RouteExtractor
 
 
 class UnifiedCapacityAlgorithm(Algorithm):

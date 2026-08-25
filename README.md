@@ -75,7 +75,7 @@ Run the solver in a Docker container (useful for systems with older glibc, e.g.,
 ```bash
 docker build -t vrptw .
 cp ./database/vrptw.db /data/jar
-docker run --rm -v /data/jar:/data vrptw --instance=C101
+docker run --rm -v /data/jar:/data vrptw --instance=C101 --capacity=200 --solver=exact
 ```
 
 Results are saved as `.xlsx` in the mounted directory.
