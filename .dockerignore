@@ -1,0 +1,56 @@
+# Version control
+.git/
+.gitignore
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+tests/
+htmlcov/
+.coverage
+.coverage.*
+.pytest_cache/
+
+# Documentation
+docs/
+*.md
+README*
+LICENSE*
+
+# C++ source (not needed for Python-only deployment)
+cpp/
+
+# Claude Code
+.claude/
+
+# Data files (mounted at runtime, not built into image)
+data/
+
+# Solomon benchmarks (too large for image)
+solomon-vrptw-benchmarks-main/
+
+# Local scripts (except docker entrypoint)
+scripts/build_cpp.py
+scripts/create_db.py
+scripts/solomon_to_csv.py
+scripts/test_vrptw_scenario.py
+
+# Worktrees
+.worktrees/

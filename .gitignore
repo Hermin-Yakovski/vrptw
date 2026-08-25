@@ -243,4 +243,5 @@ solomon-vrptw-benchmarks-main/*
 
 # generated data
 data/
-database/
+database/*
+!database/vrptw.db
