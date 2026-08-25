@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "vrptw"
-version = "0.1.4"
+version = "0.1.5"
 description = "Implement VRPTW using or-scenario framework"
 authors = [{name = "HerminYakovski", email = "hemin.ye@qq.com"}]
 readme = "README.md"
