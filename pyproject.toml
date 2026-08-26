@@ -1,6 +1,6 @@
 [build-system]
-requires = ["scikit-build-core>=0.10", "pybind11>=2.12"]
-build-backend = "scikit_build_core.build"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "vrptw"
@@ -13,13 +13,6 @@ dependencies = [
     "or-scenario>=0.3.0",
     "or-algo>=0.3.1",
 ]
-
-[tool.scikit-build]
-cmake.build-type = "Release"
-cmake.source-dir = "cpp"
-cmake.version = ">=3.20"
-cmake.args = ["-DPYBIND11_FINDPYTHON=ON"]
-wheel.packages = ["vrptw"]
 
 [tool.uv]
 index-strategy = "unsafe-best-match"

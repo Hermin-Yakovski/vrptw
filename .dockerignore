@@ -33,7 +33,7 @@ docs/
 README_DOCKER.md
 LICENSE*
 
-# C++ source (not needed for Python-only deployment)
+# C++ source (not needed — build no longer uses C++)
 cpp/
 
 # Claude Code
