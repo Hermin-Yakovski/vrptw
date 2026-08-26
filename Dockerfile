@@ -10,4 +10,4 @@ COPY . .
 # Install with uv to respect lock file
 RUN uv sync --frozen --no-dev
 
-ENTRYPOINT ["python", "scripts/docker_entrypoint.py"]
+ENTRYPOINT ["uv", "run", "python", "scripts/docker_entrypoint.py"]
